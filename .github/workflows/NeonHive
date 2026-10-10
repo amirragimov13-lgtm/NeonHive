@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>НЕОНОВЫЙ УЛЕЙ | Аркадный Шутер</title>
+    <style>
+        /* --- БАЗОВЫЕ НАСТРОЙКИ И ПЕРЕМЕННЫЕ --- */
+        :root {
+            --bg-color: #0b0c15;
+            --panel-bg: rgba(18, 20, 42, 0.6);
+            --primary-cyan: #00e5ff;
+            --secondary-magenta: #ff2d91;
+            --accent-yellow: #ffd63c;
+            --text-main: #eeefff;
+            --text-dim: #969bbe;
+            --font-heading: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-body: 'Open Sans', Segoe UI, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- АНИМИРОВАННЫЙ ФОН (ЗВЕЗДЫ) --- */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(circle at center, #1a1c2e 0%, #0b0c15 100%);
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: twinkle linear infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* --- НАВИГАЦИЯ --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(11, 12, 21, 0.8);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--primary-cyan), var(--secondary-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-cyan);
+            text-shadow: 0 0 10px var(--primary-cyan);
+        }
+
+        /* --- HERO SECTION (ГЛАВНЫЙ ЭКРАН) --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.4));
+        }
+
+        .hero h1 span.cyan { color: var(--primary-cyan); }
+        .hero h1 span.magenta { color: var(--secondary-magenta); }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-cyan), #009db8);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 2px solid var(--secondary-magenta);
+            box-shadow: inset 0 0 10px rgba(255, 45, 145, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 45, 145, 0.1);
+            box-shadow: 0 0 20px rgba(255, 45, 145, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* --- FEATURES SECTION --- */
+        .features {
+            padding: 100px 5%;
+            background: linear-gradient(to bottom, transparent, rgba(11, 12, 21, 0.9));
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-cyan), var(--secondary-magenta));
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-cyan);
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-cyan);
+        }
+
+        .card p {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        /* --- GALLERY / SCREENSHOTS PLACEHOLDER --- */
+        .gallery {
+            padding: 100px 5%;
+            text-align: center;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .screenshot-placeholder {
+            aspect-ratio: 16/9;
+            background: #1a1c2e;
+            border: 1px dashed var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            font-style: italic;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-placeholder:hover {
+            border-color: var(--secondary-magenta);
+            color: var(--secondary-magenta);
+            background: rgba(255, 45, 145, 0.05);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 40px 5%;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .nav-links { display: none; } /* Простая скрытие меню для мобилок */
+            .hero h1 { font-size: 2.5rem; }
+            .cta-buttons { flex-direction: column; width: 100%; }
+            .btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Анимированный фон -->
+    <div class="stars-container" id="stars"></div>
+
+    <!-- Навигация -->
+    <nav>
+        <div class="logo">NEON HIVE</div>
+        <div class="nav-links">
+            <a href="#home">Главная</a>
+            <a href="#features">Фишки</a>
+            <a href="#gallery">Галерея</a>
+            <a href="#download">Скачать</a>
+        </div>
+    </nav>
+
+    <!-- Главный экран -->
+    <header class="hero" id="home">
+        <h1><span class="cyan">НЕОНОВЫЙ</span><br><span class="magenta">УЛЕЙ</span></h1>
+        <p>Динамичный аркадный шутер против роя машинных насекомых. Выживай, комбо-бей и покоряй волны хаоса.</p>
+        <div class="cta-buttons">
+            <a href="#" class="btn btn-primary" onclick="alert('Игра скоро будет доступна!'); return false;">Играть сейчас</a>
+            <a href="#features" class="btn btn-secondary">Подробнее</a>
+        </div>
+    </header>
+
+    <!-- Секция особенностей -->
+    <section class="features" id="features">
+        <h2 class="section-title">Почему это круто?</h2>
+        <div class="grid">
+            <div class="card">
+                <span class="card-icon">🌊</span>
+                <h3>Бесконечные волны</h3>
+                <p>Каждая волна сложнее предыдущей. Новые типы врагов, боссы каждые 5 уровней и нарастающая интенсивность.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">⚡</span>
+                <h3>Неоновая эстетика</h3>
+                <p>Визуальный стиль киберпанк-аркады. Частицы, свечение, тряска экрана и синтезированная музыка создают атмосферу.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">🎁</span>
+                <h3>Система бонусов</h3>
+                <p>Веерные пушки, скорострельность, щиты и лечение. Собирай дропы от врагов, чтобы усилить свой корабль.</p>
+            </div>
+            <div class="card">
+                <span class="card-icon">💥</span>
+                <h3>Живые события</h3>
+                <p>Метеоритные дожди, чёрные дыры и ярость улья меняют правила игры прямо посреди боя.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Галерея (Заглушки для скриншотов) -->
+    <section class="gallery" id="gallery">
+        <h2 class="section-title">Скриншоты</h2>
+        <p style="color: var(--text-dim); margin-bottom: 20px;">Здесь будут реальные кадры из игры. Пока что представь себе неоновое сияние!</p>
+        <div class="screenshots-grid">
+            <div class="screenshot-placeholder">[ Скриншот: Бой с дронами ]</div>
+            <div class="screenshot-placeholder">[ Скриншот: Встреча с Боссом ]</div>
+            <div class="screenshot-placeholder">[ Скриншот: Эффекты частиц ]</div>
+            <div class="screenshot-placeholder">[ Скриншот: Меню выбора режима ]</div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer id="download">
+        <p>&copy; 2026 Neon Hive Project. Создано на Python & Pygame.</p>
+        <p>Хочешь исходники? <a href="#">Напиши автору</a></p>
+    </footer>
+
+    <script>
+        // Генерация звездного фона
+        function createStars() {
+            const container = document.getElementById('stars');
+            const starCount = 150;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Случайное положение
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Случайный размер
+                const size = Math.random() * 3 + 1;
+                
+                // Случайная длительность мерцания
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 5;
+
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDuration = `${duration}s`;
+                star.style.animationDelay = `${delay}s`;
+
+                container.appendChild(star);
+            }
+        }
+
+        // Запуск при загрузке
+        window.addEventListener('DOMContentLoaded', createStars);
+
+        // Плавная прокрутка для ссылок навигации
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
